@@ -173,13 +173,35 @@ bool ofxAutoReloadedShader::filesChanged()
 	return fileChanged;
 }
 
+template <typename TP>
+std::time_t to_time_t(TP tp)
+{
+    using namespace std::chrono;
+    auto sctp = time_point_cast<system_clock::duration>(tp - TP::clock::now()
+              + system_clock::now());
+    return system_clock::to_time_t(sctp);
+}
+
 // ---------------------------------------------------------------------------------------------------------------------------------------------------
 //
 std::time_t ofxAutoReloadedShader::getLastModified( ofFile& _file )
 {
 	if( _file.exists() )
 	{
+#if OF_VERSION_MAJOR==0 && OF_VERSION_MINOR<=11
+#if OF_VERSION_MINOR<11 || OF_VERSION_PATCH <= 1
+        // <= 0.11.1
         return std::filesystem::last_write_time(_file.path());
+#else
+        // > 0.11.1
+        const auto ftime = std::filesystem::last_write_time(_file.path());
+        return to_time_t(ftime);
+#endif
+#else
+        // > 0.11
+        const auto ftime = std::filesystem::last_write_time(_file.path());
+        return to_time_t(ftime);
+#endif
 	}
 	else
 	{
