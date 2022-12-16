@@ -50,30 +50,18 @@ bool ofxAutoReloadedShader::load(string vertName, string fragName, string geomNa
 	fragmentShaderFile = ofFile( ofToDataPath( fragmentShaderFilename ) );
 	geometryShaderFile = ofFile( ofToDataPath( geometryShaderFilename ) );
 	
-	ofBuffer vertexShaderBuffer = ofBufferFromFile( ofToDataPath( vertexShaderFilename ) );
-	ofBuffer fragmentShaderBuffer = ofBufferFromFile( ofToDataPath( fragmentShaderFilename ) );
-	ofBuffer geometryShaderBuffer = ofBufferFromFile( ofToDataPath( geometryShaderFilename ) );
-	
 	fileChangedTimes.clear();
 	fileChangedTimes.push_back( getLastModified( vertexShaderFile ) );
 	fileChangedTimes.push_back( getLastModified( fragmentShaderFile ) );
 	fileChangedTimes.push_back( getLastModified( geometryShaderFile ) );
-	
-	if( vertexShaderBuffer.size() > 0 )
-	{
-		setupShaderFromSource(GL_VERTEX_SHADER, vertexShaderBuffer.getText() );
-	}
 
-	if( fragmentShaderBuffer.size() > 0 )
-	{
-		setupShaderFromSource(GL_FRAGMENT_SHADER, fragmentShaderBuffer.getText());
-	}
+    setupShaderFromFile(GL_VERTEX_SHADER, vertexShaderFilename);
+    setupShaderFromFile(GL_FRAGMENT_SHADER, fragmentShaderFilename);
 
 	#ifndef TARGET_OPENGLES
-	if( geometryShaderBuffer.size() > 0 )
-	{
-		setupShaderFromSource(GL_GEOMETRY_SHADER_EXT, geometryShaderBuffer.getText());
-	}
+    if (geometryShaderFilename.empty() == false) {
+        setupShaderFromFile(GL_GEOMETRY_SHADER_EXT, geometryShaderFilename);
+    }
 	#endif
 
 	bindDefaults();
