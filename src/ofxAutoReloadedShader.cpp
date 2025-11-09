@@ -54,14 +54,22 @@ bool ofxAutoReloadedShader::load(string vertName, string fragName, string geomNa
 	fileChangedTimes.push_back( getLastModified( vertexShaderFile ) );
 	fileChangedTimes.push_back( getLastModified( fragmentShaderFile ) );
 	fileChangedTimes.push_back( getLastModified( geometryShaderFile ) );
+	
+    if( ofFile::doesFileExist(vertexShaderFilename) )
+	{
+        setupShaderFromFile(GL_VERTEX_SHADER, ofToDataPath(vertexShaderFilename));
+	}
 
-    setupShaderFromFile(GL_VERTEX_SHADER, vertexShaderFilename);
-    setupShaderFromFile(GL_FRAGMENT_SHADER, fragmentShaderFilename);
+    if( ofFile::doesFileExist(fragmentShaderFilename) )
+	{
+        setupShaderFromFile(GL_FRAGMENT_SHADER, ofToDataPath(fragmentShaderFilename));
+	}
 
 	#ifndef TARGET_OPENGLES
-    if (geometryShaderFilename.empty() == false) {
-        setupShaderFromFile(GL_GEOMETRY_SHADER_EXT, geometryShaderFilename);
-    }
+    if( ofFile::doesFileExist(geometryShaderFilename) )
+	{
+        setupShaderFromFile(GL_GEOMETRY_SHADER_EXT, ofToDataPath(geometryShaderFilename));
+	}
 	#endif
 
 	bindDefaults();
